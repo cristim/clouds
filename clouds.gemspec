@@ -25,6 +25,7 @@ lib/clouds.rb
   s.add_development_dependency('aruba')
   s.add_development_dependency('aws-sdk')
   s.add_development_dependency('inifile')
+  s.add_development_dependency('gli')
   s.add_runtime_dependency('gli','2.8.1')
   s.add_runtime_dependency('aws-sdk')
   s.add_runtime_dependency('inifile')
