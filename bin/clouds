@@ -11,7 +11,7 @@ program_desc 'Tool that eases handling of AWS Cloudformation stacks as code'
 
 version Clouds::VERSION
 
-desc 'Dry run, nothing would be done'
+desc 'Dry run, nothing would be done NOT IMPLEMENTED YET'
 switch [:d,:dry], :negatable => false
 
 
