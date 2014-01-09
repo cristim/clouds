@@ -21,7 +21,7 @@ This is a tool that aims to ease the handling of Cloudformation stacks as code.
 
 Simply run
 
-    rake gem
+    rake package
 
 ## Installing
     sudo gem install pkg/clouds-0.0.1.gem
