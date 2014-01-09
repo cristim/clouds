@@ -11,42 +11,42 @@ This is a tool that aims to ease the handling of Cloudformation stacks as code.
 
 ## Build instructions
 Simply run
- rake gem
+    rake gem
 
 ## Installing
-  sudo gem install pkg/clouds-0.0.1.gem
+    sudo gem install pkg/clouds-0.0.1.gem
 
 ## Running
 Execute this in your shell:
- clouds
+    clouds
 
- export AWS_DEFAULT_PROFILE#my_aws_profile # as defined in .aws/config
+    export AWS_DEFAULT_PROFILE#my_aws_profile # as defined in .aws/config
 
-oh-my-zsh users can also use the asp command implemented in the AWS zsh plugin https://github.com/robbyrussell/oh-my-zsh/pull/2149
+oh-my-zsh users can also use the asp command implemented in the [AWS zsh plugin](https://github.com/robbyrussell/oh-my-zsh/pull/2149)
 
 
 Dump all the stacks from your account into the current directory:
- clouds dump --all
+    clouds dump --all
 
 Once you edit a stack source code, this command would update it on AWS:
- clouds update stack_name
+    clouds update stack_name
 
 Clone a stack (locally)
- clouds clone stack new_stack
+    clouds clone stack new_stack
 
 Upload the cloned stack to AWS
- clouds update new_stack -c
+    clouds update new_stack -c
 
 Delete the new stack (needs --force)
- clouds delete new_stack
+    clouds delete new_stack
 
 ## Development
 ### Install dependencies
- bundle install
+    bundle install
 
 ### Running for development
- bundle exec bin/clouds
+    bundle exec bin/clouds
 
 ### Updating the installed gem
- rake repackage
- sudo gem install pkg/clouds-0.0.1.gem
+    rake repackage
+    sudo gem install pkg/clouds-0.0.1.gem
