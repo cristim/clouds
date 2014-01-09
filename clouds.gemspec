@@ -16,8 +16,8 @@ lib/clouds.rb
   )
   s.require_paths << 'lib'
   s.has_rdoc = true
-  s.extra_rdoc_files = ['README.rdoc','clouds.rdoc']
-  s.rdoc_options << '--title' << 'clouds' << '--main' << 'README.rdoc' << '-ri'
+  s.extra_rdoc_files = ['README.md','clouds.rdoc']
+  s.rdoc_options << '--title' << 'clouds' << '--main' << 'README.md' << '-ri'
   s.bindir = 'bin'
   s.executables << 'clouds'
   s.add_development_dependency('rake')
