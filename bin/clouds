@@ -1,0 +1,133 @@
+#!/usr/bin/env ruby
+# For development, you need to use `bundle exec bin/clouds` to run this code
+# At install-time, RubyGems will make sure the lib, etc. are in the load path
+
+require 'gli'
+require 'clouds'
+
+include GLI::App
+
+program_desc 'Tool that eases handling of AWS Cloudformation stacks as code'
+
+version Clouds::VERSION
+
+desc 'Dry run, nothing would be done'
+switch [:d,:dry], :negatable => false
+
+
+desc 'Force overwrites of existing data'
+switch [:f,:force], :negatable => false
+
+desc 'List CloudFormation stacks from your account'
+arg_name 'Arguments to list'
+command :list do |c|
+
+  c.desc 'List all the stacks available within your account'
+
+  c.action do |global_options,options,args|
+
+    raise 'This command takes no arguments.' unless args.empty?
+    list_stacks()
+  end
+end
+
+desc 'Dump CloudFormation stacks from your account into the current directory'
+arg_name 'Arguments to dump'
+command :dump do |c|
+
+  c.desc 'Dump all the stacks available within your account into the current directory'
+  c.switch [:a,:all], :negatable => false
+  c.desc 'Force overwrites of existing data'
+  c.switch [:f,:force], :negatable => false
+
+  c.action do |global_options,options,args|
+    if args.empty? && options[:all]
+      puts 'dumping all stacks'
+      dump_all_stacks(global_options[:force] || options[:force])
+    elsif args.length >= 1
+      puts "dumping the following stacks: #{args.inspect}"
+      dump_stacks(args, global_options[:force] || options[:force])
+    else # no arguments and --all flag
+      raise 'This command needs a list of stacks, or the --all flag in order to dump all the stacks.'
+    end
+  end
+end
+
+desc 'Clones an existing stack into a new one'
+arg_name 'Arguments: stack new_stack'
+command :clone do |c|
+  c.desc 'Force overwrites of existing data'
+  c.switch [:f,:force], :negatable => false
+
+  c.desc 'Commit changes to AWS, otherwise just copy the stack locally'
+  c.switch [:c,:commit], :negatable => false
+
+  c.action do |global_options,options,args|
+    if args.length == 2
+      clone_stack(args.first, args.last, global_options[:force] || options[:force], options['commit'])
+    else
+      raise 'Needed arguments: source_stack destination_stack'
+    end
+  end
+end
+
+desc 'Updated a list of CloudFormation stacks based on information from the current directory'
+arg_name 'Arguments to update'
+command :update do |c|
+
+  c.desc 'Update all the stacks within the current directory'
+  c.switch [:a,:all], :negatable => false
+  c.desc 'Create AWS stacks if the required sources exist locally'
+  c.switch [:c,:create_missing], :negatable => false
+
+  c.action do |global_options,options,args|
+    if args.empty? && options[:all]
+      puts 'dumping all stacks'
+      update_all_stacks(options[:create_missing])
+    elsif args.length >= 1
+      puts "updating the following stacks: #{args.inspect}"
+      update_stacks(args,options[:create_missing])
+    else # no arguments and --all flag
+      raise 'This command needs a list of stacks, or the --all flag in order to update all the stacks.'
+    end
+  end
+end
+
+#TODO: support deletion of multiple stacks, and of all stacks.
+desc 'Deletes a stack'
+arg_name 'Arguments: stack'
+command :delete do |c|
+  c.desc 'Force deletion of the running stack'
+  c.switch [:f,:force], :negatable => false
+  c.action do |global_options,options,args|
+    raise "This command might impact running environments and it needs the --force flag, hopefully you know what you are doing"  unless global_options[:force] || options[:force]
+    if args.length == 1
+      delete_stack(args.first)
+    else
+      raise 'Needed arguments: stack'
+    end
+  end
+end
+
+pre do |global,command,options,args|
+  # Pre logic here
+  # Return true to proceed; false to abort and not call the
+  # chosen command
+  # Use skips_pre before a command to skip this block
+  # on that command only
+  true
+end
+
+post do |global,command,options,args|
+  # Post logic here
+  # Use skips_post before a command to skip this
+  # block on that command only
+end
+
+on_error do |exception|
+  # Error logic here
+  # return false to skip default error handling
+  true
+end
+
+exit run(ARGV)

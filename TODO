@@ -1,0 +1,5 @@
+TODO                                                                        
+ - add an edit command able to open the stack template in the $EDITOR          
+ - add an option to delete stacks locally only      
+ - write tests
+ - write documentation
