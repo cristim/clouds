@@ -10,7 +10,15 @@ This is a tool that aims to ease the handling of Cloudformation stacks as code.
 - Clone existing stacks to create new ones. It defaults to local clone, which then needs another update call to get in effect
 - Delete existing stacks
 
+## Build requirements
+- Ruby with rubygems support
+- Rake
+- Bundler
+    gem install bundler
+
+
 ## Build instructions
+
 Simply run
 
     rake gem
