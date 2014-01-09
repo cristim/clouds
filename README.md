@@ -4,8 +4,9 @@ This is a tool that aims to ease the handling of Cloudformation stacks as code.
 
 ## Features
 - List existing stacks defined in AWS and also those only defined locally
-- Dumps all the stacks from your account into the current directory (preferably SCN backed) under the 'stacks' directory.
+- Dump all the stacks from your account into the current directory (preferably SCM backed) under the 'stacks' directory.
 - Perform updates on the AWS stacks once you modified the dumped data
+- Validate templates as JSON when updating a stack
 - Clone existing stacks to create new ones. It defaults to local clone, which then needs another update call to get in effect
 - Delete existing stacks
 
