@@ -87,6 +87,7 @@ end
 
 def list_local_stacks()
   list = []
+  return [] unless File.directory?('stacks')
   Dir.foreach('stacks') do |item|
     next if item == '.' or item == '..'
     list << item
