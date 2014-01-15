@@ -14,12 +14,14 @@ This is a tool that aims to ease the handling of Cloudformation stacks as code.
 - Ruby, rubygems and rake (some might already be there on Ruby > 1.9)
 - Development headers for libxml2 and libxslt (-devel packages)
 - Bundler
-    gem install bundler
-    bundle install
+
+    sudo gem install bundler
+
+    sudo bundle install
 
 ## Build instructions
 
-Simply run
+Simply run (once you have the stated requirements satisfied)
 
     rake package
 
