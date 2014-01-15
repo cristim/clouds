@@ -2,3 +2,4 @@ stacks
 pkg
 html
 .rakeTasks
+*.iml
