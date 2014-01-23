@@ -56,7 +56,7 @@ def get_template_path(stack_name)
   File.join(get_stack_directory(stack_name), 'template.json')
 end
 
-def get_paramters_path(stack_name)
+def get_parameters_path(stack_name)
   File.join(get_stack_directory(stack_name), 'parameters.yaml')
 end
 
@@ -106,7 +106,7 @@ def dump_stacks(stack_list, force=false)
       parameters = stack.parameters
       create_stack_directory(stack_name)
       write_file(get_template_path(stack_name), template_content, force)
-      write_file(get_paramters_path(stack_name), parameters.to_yaml, force)
+      write_file(get_parameters_path(stack_name), parameters.to_yaml, force)
     rescue => e
       puts "dump failed: #{e}"
     end
@@ -129,16 +129,16 @@ def update_stack(stack_name, create_if_missing=false)
   stack=nil
 
   template_content = read_file(get_template_path(stack_name))
-  parameters_content = read_file(get_paramters_path(stack_name))
+  parameters_content = read_file(get_parameters_path(stack_name))
 
   begin
     parameters_hash = YAML.load(parameters_content)
   rescue => e
     puts e
+    raise e
   end
 
   raise 'Empty stack template' if template_content.nil? || template_content.empty?
-  raise 'Empty stack parameters' if parameters_hash.empty?
 
   template_validation = @cfn.validate_template(template_content)
   raise template_validation[:message] unless template_validation[:message].nil?

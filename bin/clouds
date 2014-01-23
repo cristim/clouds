@@ -53,6 +53,35 @@ command :dump do |c|
   end
 end
 
+desc 'Edit a CloudFormation stack locally'
+arg_name 'Arguments to edit'
+command :edit do |c|
+
+  c.desc 'Force overwrites of existing data'
+  c.switch [:p,:parameters], :negatable => false
+  c.switch [:t,:template], :negatable => false
+
+  c.action do |global_options,options,args|
+    if args.length == 1
+      stack = args[0]
+      if options[:parameters]
+        puts 'editing parameters'
+        system("#{ENV['EDITOR']} #{get_parameters_path(stack)}")
+      elsif options[:template]
+        puts 'editing template'
+        system("#{ENV['EDITOR']} #{get_template_path(stack)}")
+      else
+        puts options.inspect
+        puts 'editing both the template and the parameters'
+        system("#{ENV['EDITOR']} #{get_template_path(stack)} #{get_parameters_path(stack)}")
+      end
+    else
+      raise 'This command needs a single stack as an argument.'
+    end
+  end
+end
+
+
 desc 'Clones an existing stack into a new one'
 arg_name 'Arguments: stack new_stack'
 command :clone do |c|
