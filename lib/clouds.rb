@@ -8,19 +8,26 @@ require 'yaml'
 
 def configure(profile=nil)
   profile = profile || ENV['AWS_DEFAULT_PROFILE']
-  raise 'No AWS configuration profile was given, please configure an AWS-cli profile and pass it to the script through the AWS_DEFAULT_PROFILE environment variable' if profile.nil?
-  puts "Using the profile '#{profile}'"
   aws_config_file = File.join(File.expand_path('~'), '.aws', 'config')
-  aws_config = IniFile.load(aws_config_file)["profile #{profile}"]
+  if profile.nil?
+    profile = "default"
+    puts "Using the default profile"
+  else
+    profile = "profile #{profile}"
+    puts "Using the profile '#{profile}'"
+  end
+  aws_config = IniFile.load(aws_config_file)[profile]
 
   @aws_access_key_id = aws_config['aws_access_key_id']
   @aws_secret_access_key = aws_config['aws_secret_access_key']
   @region = aws_config['region']
 
+  proxy = ENV['http_proxy'] || ENV['HTTP_PROXY']
+
   AWS.config({:access_key_id => @aws_access_key_id,
               :secret_access_key => @aws_secret_access_key,
               :region => @region,
-              :proxy_uri => ENV['http_proxy'],
+              :proxy_uri => proxy,
   })
 
   @cfn = AWS::CloudFormation.new
