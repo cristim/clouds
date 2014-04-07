@@ -7,25 +7,34 @@ require 'fileutils'
 require 'yaml'
 
 def configure(profile=nil)
-  profile = profile || ENV['AWS_DEFAULT_PROFILE']
-  aws_config_file = File.join(File.expand_path('~'), '.aws', 'config')
-  if profile.nil?
-    profile = "default"
-    puts "Using the default profile"
+  if profile.nil? && ENV['AWS_ACCESS_KEY_ID'] && ENV['AWS_SECRET_ACCESS_KEY']
+    @aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
+    @aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+    @aws_session_token = ENV['AWS_SECURITY_TOKEN']
+    @region = ENV['AWS_DEFAULT_REGION'] || 'us-east-1'
   else
-    profile = "profile #{profile}"
-    puts "Using the profile '#{profile}'"
-  end
-  aws_config = IniFile.load(aws_config_file)[profile]
+    profile = profile || ENV['AWS_DEFAULT_PROFILE']
+    aws_config_file = File.join(File.expand_path('~'), '.aws', 'config')
 
-  @aws_access_key_id = aws_config['aws_access_key_id']
-  @aws_secret_access_key = aws_config['aws_secret_access_key']
-  @region = aws_config['region']
+    if profile.nil?
+      profile = "default"
+      puts "Using the default profile"
+    else
+      profile = "profile #{profile}"
+      puts "Using the profile '#{profile}'"
+    end
+    aws_config = IniFile.load(aws_config_file)[profile]
+
+    @aws_access_key_id = aws_config['aws_access_key_id']
+    @aws_secret_access_key = aws_config['aws_secret_access_key']
+    @region = aws_config['region']
+  end
 
   proxy = ENV['http_proxy'] || ENV['HTTP_PROXY']
 
   AWS.config({:access_key_id => @aws_access_key_id,
               :secret_access_key => @aws_secret_access_key,
+              :session_token => @aws_session_token,
               :region => @region,
               :proxy_uri => proxy,
   })
