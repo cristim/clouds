@@ -20,13 +20,13 @@ lib/clouds.rb
   s.rdoc_options << '--title' << 'clouds' << '--main' << 'README.md' << '-ri'
   s.bindir = 'bin'
   s.executables << 'clouds'
+
   s.add_development_dependency('rake')
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
-  s.add_development_dependency('aws-sdk')
-  s.add_development_dependency('inifile')
-  s.add_development_dependency('gli')
-  s.add_runtime_dependency('gli','2.8.1')
+  s.add_development_dependency('nokogiri')
+
+  s.add_runtime_dependency('gli')
   s.add_runtime_dependency('aws-sdk')
   s.add_runtime_dependency('inifile')
 end
