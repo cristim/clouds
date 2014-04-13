@@ -10,23 +10,13 @@ This is a tool that aims to ease the handling of Cloudformation stacks as code.
 - Clone existing stacks to create new ones. It defaults to local clone, which then needs another update call to get in effect
 - Delete existing stacks
 
-## Build requirements
-- Ruby, rubygems and rake (some might already be there on Ruby > 1.9)
-- Development headers for libxml2 and libxslt (-devel packages)
-- Bundler
+## Installation
 
-    sudo gem install bundler
+    gem install clouds
 
-    sudo bundle install
+or in Gemfile:
 
-## Build instructions
-
-Simply run (once you have the stated requirements satisfied)
-
-    rake package
-
-## Installing
-    sudo gem install pkg/clouds-0.0.1.gem
+    gem 'clouds'
 
 ## Running
 Execute this in your shell:
@@ -61,7 +51,16 @@ Delete the new stack (needs --force)
 
     clouds delete new_stack
 
+
 ## Development
+
+### Build requirements
+- Ruby, rubygems and rake (some might already be there on Ruby > 1.9)
+- Development headers for libxml2 and libxslt (-devel packages)
+- Bundler
+
+    gem install bundler
+
 ### Install dependencies
 Only in case you didn't do it before
 
@@ -75,3 +74,15 @@ Only in case you didn't do it before
 
     rake repackage
     sudo gem install pkg/clouds-0.0.1.gem
+
+
+### Build instructions
+
+Simply run (once you have the stated requirements satisfied)
+
+    rake package
+
+### Installing
+
+    sudo gem install pkg/clouds-0.0.1.gem
+
