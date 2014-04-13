@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    clouds (0.0.1)
-      aws-sdk
-      gli
-      inifile
+    clouds (0.1.0)
+      aws-sdk (~> 1.38.0)
+      gli (~> 2.9.0)
+      inifile (~> 2.0.2)
 
 GEM
   remote: https://rubygems.org/
@@ -49,8 +49,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aruba
+  aruba (~> 0.5.4)
+  bundler
   clouds!
-  nokogiri
-  rake
-  rdoc
+  nokogiri (~> 1.6.1)
+  rake (~> 10.2.2)
+  rdoc (~> 4.1.1)
