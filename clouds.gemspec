@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.version = Clouds::VERSION
   s.author = 'Cristian Magherusan-Stanciu'
   s.email = 'cristian.magherusan-stanciu@here.com'
-  s.homepage = 'http://here.com'
+  s.homepage = 'https://github.com/cristim/clouds'
   s.platform = Gem::Platform::RUBY
   s.summary = 'AWS Cloudformation API'
   s.description = 'A layer of syntax sugar around the AWS Cloudformation API that allows you to handle Cloudformation-defined infrastructure as code with a simple tool'
