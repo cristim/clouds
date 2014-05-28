@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    clouds (0.1.2)
+    clouds (0.1.0)
       aws-sdk (~> 1.38.0)
       gli (~> 2.9.0)
       inifile (~> 2.0.2)
