@@ -6,6 +6,20 @@ require 'inifile'
 require 'fileutils'
 require 'yaml'
 
+# shamelessly copied from www.dzone.com/snippets/generating-yaml-hashes-sorted
+class Hash
+  # Replacing the to_yaml function so it'll serialize hashes sorted (by their keys)
+  def to_yaml( opts = {} )
+    YAML::quick_emit( object_id, opts ) do |out|
+      out.map( taguri, to_yaml_style ) do |map|
+        sort.each do |k, v|   # <-- here's my addition (the 'sort')
+          map.add( k, v )
+        end
+      end
+    end
+  end
+end
+
 def configure(profile=nil)
   if profile.nil? && ENV['AWS_ACCESS_KEY_ID'] && ENV['AWS_SECRET_ACCESS_KEY']
     @aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
