@@ -1,5 +1,0 @@
-TODO                                                                        
- - add an edit command able to open the stack files in the $EDITOR
- - decouple local and remote stack deletion
- - write tests
- - write documentation
