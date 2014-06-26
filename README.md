@@ -2,27 +2,36 @@
 
 This is a simple tool that aims to ease the handling of [AWS CloudFormation](https://aws.amazon.com/cloudformation/) stacks, following the [infrastructure as code](http://sdarchitect.wordpress.com/2012/12/13/infrastructure-as-code/) philosophy in ways that are not possible with the AWS console. Even though you can achieve pretty much the same using the AWS command line tools, `clouds` aims to be much easier to use, cleaner and more specialized in handling CloudFormation stacks as code.
 
+For some details about the story behind it, you can see this [presentation](http://slidesha.re/U7SRPq) on Slideshare.
+
 ## Features
 - Upload templates and parameters from the current directory into AWS with a single intuitive command. They need to be located in stacks/stack_name/{template.json,parameters.yaml}
 - List existing stacks defined in AWS and also those only defined locally
 - Dump one or all of the stacks from your currently selected AWS account into the current directory (preferably stored in a version control system) under the 'stacks' directory, including both the template JSON code and the parameters that were used for launching it, which will then be saved in a human-friendly YAML file.
 - Perform updates on the AWS stacks once you modified the dumped data (template or parameters)
 - Validate templates for JSON correctness when uploading or updating a stack. The error messages should help you debug syntax errors.
-- Clone existing stacks to create new ones. It defaults to local clone, which then needs another update call to get in effect. This is an easy way to migrate infrastructure code and later to promote changes between environments, and can also be used easily with projects running in different AWS accounts, especially if using a simple AWS profile switcher shell alias like implemented on oh-my-zsh.
+- Clone existing stacks to create new ones. It defaults to a local clone, which then needs another update call to get in effect. This is an easy way to migrate infrastructure 'code' around and makes it trivial to promote changes between environments, and can also be used easily with projects running in different AWS accounts. This is especially convenient together with an AWS profile switcher shell alias like implemented on the oh-my-zsh aws plugin.
 - Perform cost calculations when creating a new stack.
 - Delete existing stacks with a simple command
-- For authentication it can use AWS account credentials defined using either the AWS_ACCESS_KEY_ID&AWS_SECRET_ACCESS_KEY combination, or the AWS_DEFAULT_PROFILE environment variables
+- For authentication it can use AWS account credentials defined using either the AWS_ACCESS_KEY_ID&AWS_SECRET_ACCESS_KEY combination, or the AWS_DEFAULT_PROFILE environment variable
 - Able to use temporary credentials, if the AWS_SECURITY_TOKEN variable is defined in the environment.
 
 ## Installation
 
+###On Ruby 1.9 or newer
+
     gem install clouds
 
-or using a [bundler](http://bundler.io/) Gemfile:
+###On Ruby 1.8.x
 
-    gem 'clouds'
+You might need to install `rubygems` separtely and you should be aware of the incompatibility between the more recent versions of `nokogiri`(a dependency of the `aws-sdk`, on which `clouds` indirectly depends on) and Ruby 1.8. This is pretty well-explained [here](http://ruby.awsblog.com/post/Tx2T9MFQJK7U74N/AWS-SDK-for-Ruby-and-Nokogiri).
 
-Note: On systems running Ruby 1.8.x such as RHEL5 and clones, you need to be aware of the incompatibility between the more recent versions of `nokogiri`(a dependency of the `aws-sdk`, that `clouds` indirectly depends on) and Ruby 1.8. This is pretty well-documented [here](http://ruby.awsblog.com/post/Tx2T9MFQJK7U74N/AWS-SDK-for-Ruby-and-Nokogiri). **You will need to manually install the latest compatible version of nokogiri and the AWS SDK for Ruby as documented on that page.**
+You will need to manually install the latest compatible version of nokogiri and its build-time dependencies, as documented below:
+
+    apt-get install libxml2-dev libxslt-dev # Debian and clones
+    yum install libxml2-devel libxslt-devel # RedHat and clones
+    gem install nokogiri --version="<1.6"
+    gem install clouds
 
 ## Running
 Execute this in your shell:
@@ -53,7 +62,7 @@ Clone a stack (locally only, so you can perform some changes)
 
     clouds clone stack new_stack
 
-Upload the cloned stack to AWS CloudFormation
+Upload the cloned stack to AWS CloudFormation. This can also be used against templates you downloaded from third other sources, not just for dumps.
 
     clouds update new_stack -c
 
@@ -65,7 +74,7 @@ Delete the new stack (needs --force)
 ## Development
 
 ### Build requirements
-- Ruby, rubygems and rake (some might already be there on Ruby > 1.9)
+- Ruby, rubygems and rake (some of them might already be there on Ruby > 1.9)
 - Development headers for libxml2 and libxslt (-devel packages)
 - Bundler
 
@@ -83,15 +92,15 @@ Only in case you didn't do it before
 ### Updating the installed gem
 
     rake repackage
-    sudo gem install pkg/clouds-0.1.0.gem
+    sudo gem install pkg/clouds-*.gem
 
 ### Build instructions
 
-Simply run (once you have the stated requirements satisfied)
+Once you have the stated requirements satisfied, you can just package it as gem
 
     rake package
 
 ### Installing your own gem
 
-    sudo gem install pkg/clouds-0.1.0.gem
+    sudo gem install pkg/clouds-*.gem
 
