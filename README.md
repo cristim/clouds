@@ -2,7 +2,7 @@
 
 This is a simple tool that aims to ease the handling of [AWS CloudFormation](https://aws.amazon.com/cloudformation/) stacks, following the [infrastructure as code](http://sdarchitect.wordpress.com/2012/12/13/infrastructure-as-code/) philosophy in ways that are not possible with the AWS console. Even though you can achieve pretty much the same things using the AWS command line tools, `clouds` aims to be much easier to use, cleaner and more specialized in handling CloudFormation stacks as code.
 
-It was developed at [HERE](here.com) and we use it pretty much on a daily basis for updating our existing stacks and creating new ones.
+It was developed at [HERE](http://here.com) and we use it pretty much on a daily basis for updating our existing stacks and creating new ones.
 
 For some details about the story behind it, you can see this [presentation](http://slidesha.re/U7SRPq) on Slideshare.
 
