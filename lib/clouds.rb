@@ -140,7 +140,7 @@ def dump_all_stacks(force=false)
   end
 end
 
-def update_stack(stack_name, create_if_missing=false)
+def update_stack(stack_name, create_if_missing=false, synchronous=false)
   configure()
   stack=nil
 
@@ -167,34 +167,53 @@ def update_stack(stack_name, create_if_missing=false)
       stack.update(:template => template_content,
                    :parameters => parameters_hash,
                    :capabilities => stack_capabilities)
+      status = wait_until_status(stack, %w( CREATE_IN_PROGRESS UPDATE_IN_PROGRESS )) if synchronous
     elsif create_if_missing
       puts "Creating stack #{stack_name}"
       stack = @cfn.stacks.create(stack_name,
                                  template_content,
                                  { :parameters => parameters_hash,
                                    :capabilities => ['CAPABILITY_IAM']})
+      status = wait_until_status(stack, %w( CREATE_IN_PROGRESS UPDATE_IN_PROGRESS )) if synchronous
     else
       puts "Skipping stack #{stack_name} since it's not defined in this AWS account, if the stack exists locally you might use the -c flag"
     end
-    unless stack.nil?
-      estimated_cost = stack.estimate_template_cost()
+    if ! stack.nil? && %w( UPDATE_COMPLETE CREATE_COMPLETE ).include?(status)
+      estimated_cost = stack.estimate_template_cost
       puts "Estimated costs for the stack #{stack_name} is #{estimated_cost}"
     end
   rescue => e
     puts e
   end
+
+  %w( UPDATE_COMPLETE CREATE_COMPLETE ).include? status
 end
 
-def update_stacks(stack_list, create_if_missing=false)
+def wait_until_status(stack, status_arr)
+  while true
+    begin
+      status = stack.status
+      printf("%s : %s\n", Time.now.strftime("%Y-%m-%d %H:%M:%S"), status)
+      return status unless status_arr.include? status
+      sleep 5
+    rescue => e
+      raise "Cannot retrieve stack status: #{e}"
+    end
+  end
+end
+
+def update_stacks(stack_list, create_if_missing=false, synchronous=false)
   stack_list.each do |stack|
-    update_stack(stack, create_if_missing)
+    res = update_stack(stack, create_if_missing, synchronous)
+    return res unless res
   end
 end
 
 def update_all_stacks()
   Dir.foreach('stacks') do |stack|
     next if item == '.' or item == '..'
-    update_stack(stack)
+    res = update_stack(stack)
+    return res unless res
   end
 end
 

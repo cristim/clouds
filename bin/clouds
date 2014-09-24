@@ -108,14 +108,16 @@ command :update do |c|
   c.switch [:a,:all], :negatable => false
   c.desc 'Create AWS stacks if the required sources exist locally'
   c.switch [:c,:create_missing], :negatable => false
+  c.desc 'Wait until finished (synchronous mode)'
+  c.switch [:w, :wait], :negatable => false
 
   c.action do |global_options,options,args|
     if args.empty? && options[:all]
       puts 'dumping all stacks'
-      update_all_stacks(options[:create_missing])
+      raise 'Failed to update the stack' unless update_all_stacks(options[:create_missing],options[:wait])
     elsif args.length >= 1
       puts "updating the following stacks: #{args.inspect}"
-      update_stacks(args,options[:create_missing])
+      raise 'Failed to update the stack' unless update_stacks(args,options[:create_missing],options[:wait])
     else # no arguments and --all flag
       raise 'This command needs a list of stacks, or the --all flag in order to update all the stacks.'
     end
