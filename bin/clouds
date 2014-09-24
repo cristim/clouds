@@ -110,14 +110,20 @@ command :update do |c|
   c.switch [:c,:create_missing], :negatable => false
   c.desc 'Wait until finished (synchronous mode)'
   c.switch [:w, :wait], :negatable => false
+  c.desc 'Print stack outputs in yaml format'
+  c.switch [:o, :outputs], :negatable => false
 
   c.action do |global_options,options,args|
     if args.empty? && options[:all]
-      puts 'dumping all stacks'
-      raise 'Failed to update the stack' unless update_all_stacks(options[:create_missing],options[:wait])
+      puts '# updating all stacks'
+      raise 'Failed to update the stack' unless update_all_stacks(options[:create_missing],
+                                                                  options[:wait],
+                                                                  options[:outputs])
     elsif args.length >= 1
-      puts "updating the following stacks: #{args.inspect}"
-      raise 'Failed to update the stack' unless update_stacks(args,options[:create_missing],options[:wait])
+      puts "# updating the following stacks: #{args.inspect}"
+      raise 'Failed to update the stack' unless update_stacks(args,options[:create_missing],
+                                                              options[:wait],
+                                                              options[:outputs])
     else # no arguments and --all flag
       raise 'This command needs a list of stacks, or the --all flag in order to update all the stacks.'
     end
