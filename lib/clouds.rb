@@ -140,9 +140,9 @@ def dump_all_stacks(force=false)
   end
 end
 
-def update_stack(stack_name, create_if_missing=false)
-  configure()
-  stack=nil
+def update_stack(stack_name, create_if_missing=false, synchronous=false, outputs=false)
+  configure
+  stack = nil
 
   template_content = read_file(get_template_path(stack_name))
   parameters_content = read_file(get_parameters_path(stack_name))
@@ -161,43 +161,71 @@ def update_stack(stack_name, create_if_missing=false)
 
   begin
     if @cfn.stacks[stack_name].exists?
-      puts "Updating stack #{stack_name}"
+      puts "# Updating stack #{stack_name}"
       stack = @cfn.stacks[stack_name]
       stack_capabilities = stack.capabilities
       stack.update(:template => template_content,
                    :parameters => parameters_hash,
                    :capabilities => stack_capabilities)
+      status = wait_until_status(stack, %w( CREATE_IN_PROGRESS UPDATE_IN_PROGRESS )) if synchronous
     elsif create_if_missing
-      puts "Creating stack #{stack_name}"
+      puts "# Creating stack #{stack_name}"
       stack = @cfn.stacks.create(stack_name,
                                  template_content,
                                  { :parameters => parameters_hash,
                                    :capabilities => ['CAPABILITY_IAM']})
+      status = wait_until_status(stack, %w( CREATE_IN_PROGRESS UPDATE_IN_PROGRESS )) if synchronous
     else
       puts "Skipping stack #{stack_name} since it's not defined in this AWS account, if the stack exists locally you might use the -c flag"
     end
-    unless stack.nil?
-      estimated_cost = stack.estimate_template_cost()
-      puts "Estimated costs for the stack #{stack_name} is #{estimated_cost}"
+    if ! stack.nil? && %w( UPDATE_COMPLETE CREATE_COMPLETE ).include?(status)
+      estimated_cost = stack.estimate_template_cost
+      puts "# Estimated costs for the stack #{stack_name} is #{estimated_cost}"
+
+      print_stack_outputs(stack) if outputs
     end
   rescue => e
     puts e
   end
+
+  %w( UPDATE_COMPLETE CREATE_COMPLETE ).include? status
 end
 
-def update_stacks(stack_list, create_if_missing=false)
+def wait_until_status(stack, status_arr)
+  while true
+    begin
+      status = stack.status
+      printf("# %s : %s\n", Time.now.strftime('%Y-%m-%d %H:%M:%S'), status)
+      return status unless status_arr.include? status
+      sleep 5
+    rescue => e
+      raise "Cannot retrieve stack status: #{e}"
+    end
+  end
+end
+
+def print_stack_outputs(stack)
+  puts '# ---'
+  puts "# Outputs from #{stack.name}"
+  stack.outputs.each do |o|
+    puts "#{o.key}: #{o.value}"
+  end
+  puts '# ---'
+end
+
+def update_stacks(stack_list, create_if_missing=false, synchronous=false, outputs=false)
   stack_list.each do |stack|
-    update_stack(stack, create_if_missing)
+    res = update_stack(stack, create_if_missing, synchronous, outputs)
+    return res unless res
   end
+
+  true
 end
 
-def update_all_stacks()
-  Dir.foreach('stacks') do |stack|
-    next if item == '.' or item == '..'
-    update_stack(stack)
-  end
+def update_all_stacks(create_if_missing=false, synchronous=false, outputs=false)
+  stacks = Dir.glob('stacks/*').map { |d| File.basename d }
+  update_stacks(stacks, create_if_missing, synchronous, outputs)
 end
-
 
 def clone_stack(stack, new_stack, force=false, commit=false)
   if File.exist?(get_stack_directory(new_stack)) and force == false
