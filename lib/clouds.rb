@@ -244,7 +244,6 @@ end
 
 def delete_stack(stack_name)
   configure()
-  FileUtils.rm_rf(get_stack_directory(stack_name))
   if @cfn.stacks[stack_name].exists?
     puts "Deleting stack #{stack_name}"
     @cfn.stacks[stack_name].delete
