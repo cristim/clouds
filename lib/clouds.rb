@@ -147,12 +147,21 @@ def update_stack(stack_name, create_if_missing=false, synchronous=false, outputs
   template_content = read_file(get_template_path(stack_name))
   parameters_content = read_file(get_parameters_path(stack_name))
 
+  parameters_hash = {}
+
   begin
-    parameters_hash = YAML.load(parameters_content)
+    yaml_hash = YAML.load(parameters_content)
   rescue => e
     puts e
     raise e
   end
+
+  yaml_hash.each do |k, v|
+    v = v.join(",") if v.is_a?(Array)
+    parameters_hash[k] = v
+  end
+
+  p parameters_hash
 
   raise 'Empty stack template' if template_content.nil? || template_content.empty?
 
