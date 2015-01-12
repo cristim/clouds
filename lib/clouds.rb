@@ -14,16 +14,15 @@ def configure(profile=nil)
     @region = ENV['AWS_DEFAULT_REGION'] || 'us-east-1'
   else
     profile = profile || ENV['AWS_DEFAULT_PROFILE']
-    aws_config_file = File.join(File.expand_path('~'), '.aws', 'config')
+    aws_credentials_file = File.join(File.expand_path('~'), '.aws', 'credentials')
 
     if profile.nil?
       profile = "default"
       puts "Using the default profile"
     else
-      profile = "profile #{profile}"
       puts "Using the profile '#{profile}'"
     end
-    aws_config = IniFile.load(aws_config_file)[profile]
+    aws_config = IniFile.load(aws_credentials_file)[profile]
 
     @aws_access_key_id = aws_config['aws_access_key_id']
     @aws_secret_access_key = aws_config['aws_secret_access_key']
