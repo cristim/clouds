@@ -1,0 +1,7 @@
+---
+DNSAlias: "www.example.com" 
+DNSHostedZoneName: "example.com."
+OriginDNSName: "origin.example.com"
+LoggingBucketName: "logs.example.com"
+StaticBucketName: "static.example.com"
+IAMSSLCertificateId: "D34DB33F" 

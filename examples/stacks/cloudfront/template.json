@@ -1,0 +1,134 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Cloudfront-based CDN",
+
+  "Parameters" : {
+    "DNSAlias" : {
+      "Type" : "CommaDelimitedList",
+      "Description" : "The DNS name (FQDN) of the Cloudfront distribution alias"
+    },
+    "DNSHostedZoneName" : {
+      "Type" : "String",
+      "Description" : "The DNS zone where DNSName is hosted, MUST END WITH A DOT!"
+    },
+    "OriginDNSName" : {
+      "Type" : "String",
+      "Description" : "The DNS name of the origin for dynamic content"
+    },
+    "StaticBucketName" : {
+      "Type" : "String",
+      "Description" : "The name of an S3 bucket to use as origin for static content"
+    },
+    "LoggingBucketName" : {
+      "Type" : "String",
+      "Description" : "The DNS name of an S3 bucket to use as logging target"
+    },
+    "IAMSSLCertificateId" : {
+      "Type" : "String",
+      "Description" : "The ID of an SSL certificate that was uploaded into IAM. It can be determined by running 'aws iam list-server-certificates'"
+    }
+  },
+  "Resources" : {
+    "myDistribution" : {
+      "Type" : "AWS::CloudFront::Distribution",
+      "Properties" : {
+         "DistributionConfig" : {
+         "Restrictions": {
+               "GeoRestriction": {
+                  "Locations" : [ "VA"],
+                  "RestrictionType" : "blacklist"
+               }
+            },
+           "Aliases": { "Ref": "DNSAlias" },
+           "Origins" : [
+            {
+                "DomainName": { "Ref": "OriginDNSName" },
+                "Id": "DynamicContentOrigin",
+                "CustomOriginConfig": {
+                  "HTTPSPort": "443",
+                  "OriginProtocolPolicy": "match-viewer"
+                }
+            },
+            {
+              "Id" : "StaticContentOrigin",
+              "CustomOriginConfig": {
+                "HTTPPort": "80",
+                "OriginProtocolPolicy": "http-only"
+              },
+              "DomainName" : { "Fn::Join" : [ "", [ { "Ref" : "StaticBucketName" }, ".s3.amazonaws.com" ] ] }
+            }
+          ],
+          "Enabled" : "true",
+          "ViewerCertificate" : {
+            "IamCertificateId" : {"Ref": "IAMSSLCertificateId"},
+            "SslSupportMethod" : "sni-only"
+          },
+          "Logging": {
+            "IncludeCookies": "true",
+            "Bucket": { "Fn::Join" : [ "", [ { "Ref" : "LoggingBucketName" }, ".s3.amazonaws.com" ] ] },
+            "Prefix": { "Fn::Join" : [ "", ["CloudFront/access-", { "Fn::Select" : [ "0", { "Ref" : "DNSAlias"}]}, "-"]] }
+          },
+          "DefaultCacheBehavior": {
+                "TargetOriginId": "DynamicContentOrigin",
+                "ForwardedValues": {
+                    "QueryString": "true",
+                    "Headers": [
+					  "*"
+                      ],
+                    "Cookies": {
+                       "Forward": "all"
+                    }
+                },
+                "ViewerProtocolPolicy": "redirect-to-https",
+                "AllowedMethods" : ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+            },
+            "CacheBehaviors" : [
+            {
+              "TargetOriginId" : "StaticContentOrigin",
+              "ForwardedValues" : {
+                "QueryString" : "true",
+                "Headers": ["Origin"],
+                "Cookies": {
+                  "Forward": "none"
+                }
+              },
+              "ViewerProtocolPolicy" : "allow-all",
+              "PathPattern" : "static_content/*"
+            }
+            ]
+          }
+      }
+    },
+    "CloudFrontDNSAlias" : {
+        "Type" : "AWS::Route53::RecordSetGroup",
+        "Properties" : {
+          "HostedZoneName" : { "Ref" : "DNSHostedZoneName" },
+          "Comment" : "Zone apex alias targeted to the CloudFront distribution, the HostedZoneId must be set to that value for CloudFront",
+          "RecordSets" : [
+            {
+              "Name" : { "Fn::Select" : [ "0", { "Ref": "DNSAlias" }]},
+              "Type" : "A",
+              "AliasTarget": {
+                "DNSName": {
+                  "Fn::GetAtt": [
+                    "myDistribution",
+                    "DomainName"
+                  ]
+                },
+                "HostedZoneId": "Z2FDTNDATAQYW2"
+              }
+            }
+          ]
+      }
+    }
+  },
+  "Outputs" : {
+    "DistributionId" : {
+       "Value" : { "Ref" : "myDistribution" }
+    },
+    "DistributionName" : {
+       "Value" : { "Fn::Join" : [ "", ["http://", {"Fn::GetAtt" : ["myDistribution", "DomainName"]} ]]}
+    }
+  }
+}

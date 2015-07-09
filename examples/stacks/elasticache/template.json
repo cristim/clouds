@@ -1,0 +1,51 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Parameters" : {
+    "CacheNodeType" : {
+      "Default" : "cache.t2.micro",
+      "Description" : "The compute and memory capacity of the nodes in the Cache Cluster",
+      "Type" : "String",
+      "AllowedValues" : [ "cache.t2.micro", "cache.m1.medium","cache.m1.large", "cache.m1.xlarge", "cache.m2.xlarge", "cache.c1.xlarge", "cache.m3.medium","cache.m3.large", "cache.m3.xlarge" ],
+      "ConstraintDescription" : "must select a valid Cache Node type."
+    },
+    "NumberOfCacheNodes" : {
+      "Default": "1",
+      "Description" : "The number of Cache Nodes the Cache Cluster should have",
+      "Type": "Number",
+      "MinValue": "1",
+      "MaxValue": "10",
+      "ConstraintDescription" : "must be between 1 and 10."
+    },
+    "NotificationTopicArn" : {
+      "Description" : "The SNS topic notifications should go",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "CacheSecurityGroup": {
+      "Type": "AWS::ElastiCache::SecurityGroup",
+      "Properties": {
+        "Description" : { "Fn::Join": [ "", [ "Memcached SG for ", { "Ref": "AWS::StackName" } ] ] }
+      }
+    },
+    "CacheSecurityGroupIngress": {
+      "Type": "AWS::ElastiCache::SecurityGroupIngress",
+      "Properties": {
+        "CacheSecurityGroupName"  : { "Ref" : "CacheSecurityGroup" },
+        "EC2SecurityGroupName"    : "Default"
+      }
+    },
+    "CacheCluster" : {
+       "Type": "AWS::ElastiCache::CacheCluster",
+       "Properties": {
+         "AutoMinorVersionUpgrade" : "true",
+         "CacheNodeType"           : { "Ref" : "CacheNodeType" },
+         "CacheSecurityGroupNames" : [ { "Ref" : "CacheSecurityGroup" } ],
+         "ClusterName"             : { "Ref": "AWS::StackName" },
+         "Engine"                  : "memcached",
+         "NotificationTopicArn"    : { "Ref" : "NotificationTopicArn" },
+         "NumCacheNodes"           : { "Ref" : "NumberOfCacheNodes" }
+       }
+    }
+  }
+}

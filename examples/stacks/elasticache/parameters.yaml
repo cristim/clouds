@@ -1,0 +1,4 @@
+---
+CacheNodeType: cache.t2.micro
+NumberOfCacheNodes: '1'
+NotificationTopicArn: arn:aws:sns:eu-west-1:12345678:MySNSTopic
