@@ -1,5 +1,6 @@
 pkg
 html
+stacks
 .rakeTasks
 *.iml
 *.gem
