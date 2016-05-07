@@ -1,5 +1,7 @@
 # clouds
 
+[![Join the chat at https://gitter.im/cristim/clouds](https://badges.gitter.im/cristim/clouds.svg)](https://gitter.im/cristim/clouds?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This is a simple tool that aims to ease the handling of [AWS CloudFormation](https://aws.amazon.com/cloudformation/) stacks, following the [infrastructure as code](http://sdarchitect.wordpress.com/2012/12/13/infrastructure-as-code/) philosophy in ways that are not possible with the AWS console. Even though you can achieve pretty much the same things using the AWS command line tools, `clouds` aims to be much easier to use, cleaner and more specialized in handling CloudFormation stacks as ~~code~~ data(IMHO JSON doesn't really qualify to be called 'code', although it's quite close if considering the intrinsics), optimized for use with a source control tool.
 
 It was developed at [HERE](http://here.com) and we use it pretty much on a daily basis for updating our existing stacks and creating new ones.
