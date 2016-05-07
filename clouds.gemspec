@@ -24,12 +24,12 @@ lib/clouds.rb
   s.license = 'GPL-2'
 
   s.add_development_dependency 'bundler'
-  s.add_development_dependency 'rake', '~> 10.2.2'
-  s.add_development_dependency 'rdoc', '~> 4.1.1'
-  s.add_development_dependency 'aruba', '~> 0.5.4'
-  s.add_development_dependency 'nokogiri', '~> 1.6.1'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rdoc'
+  s.add_development_dependency 'aruba'
+  s.add_development_dependency 'nokogiri'
 
-  s.add_runtime_dependency 'gli', '~> 2.9.0'
-  s.add_runtime_dependency 'aws-sdk', '~> 1.38.0'
-  s.add_runtime_dependency 'inifile', '~> 2.0.2'
+  s.add_runtime_dependency 'gli'
+  s.add_runtime_dependency 'aws-sdk-v1'
+  s.add_runtime_dependency 'inifile'
 end

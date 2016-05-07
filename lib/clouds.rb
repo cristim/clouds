@@ -1,6 +1,6 @@
 require 'clouds/version.rb'
 
-require 'aws-sdk'
+require 'aws-sdk-v1'
 
 require 'inifile'
 require 'fileutils'
