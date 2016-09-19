@@ -1,5 +1,13 @@
 # clouds
 
+# Discontinued development
+
+This project is no longer being maintained. It was good enough for me so I didn't spend much time improving it afterwards and it never really took off with external contributions.
+
+In the meantime, [@elias5000](https://github.com/elias5000) rewrote it in Python, implementing the same functionality including most of the command-line flags, and enhanced it further with some awesome new features.
+
+His new project is now available [here](https://github.com/elias5000/clouds-aws) and is installable via `pip install clouds-aws`, and I recommend you to to give it a try.
+
 [![Join the chat at https://gitter.im/cristim/clouds](https://badges.gitter.im/cristim/clouds.svg)](https://gitter.im/cristim/clouds?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 This is a simple tool that aims to ease the handling of [AWS CloudFormation](https://aws.amazon.com/cloudformation/) stacks, following the [infrastructure as code](http://sdarchitect.wordpress.com/2012/12/13/infrastructure-as-code/) philosophy in ways that are not possible with the AWS console. Even though you can achieve pretty much the same things using the AWS command line tools, `clouds` aims to be much easier to use, cleaner and more specialized in handling CloudFormation stacks as ~~code~~ data(IMHO JSON doesn't really qualify to be called 'code', although it's quite close if considering the intrinsics), optimized for use with a source control tool.
